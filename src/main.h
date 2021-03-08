@@ -21,10 +21,6 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
-
-#include "config.h"
-
 typedef struct
 {
 	bool bIsTouched;
@@ -35,3 +31,6 @@ typedef struct
   	uint8_t iTouchingCnt;
 } CapacitiveTouchButton;
 
+typedef uint8_t Sequence[6];
+
+#include "config.h"

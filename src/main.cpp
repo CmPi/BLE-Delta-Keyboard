@@ -32,7 +32,24 @@ BleKeyboard bleKeyboard("Spanish Delta Keyboard","CmPi",100);
 CapacitiveTouchButton aButtons[TOUCHS_NUM];
 
 void setup() {
-  // put your setup code here, to run once:
+
+  Serial.begin(115200);
+    while (!Serial)
+  ;
+
+  bleKeyboard.begin();
+
+  int iTouchIndex;
+  for (iTouchIndex=0; iTouchIndex<TOUCHS_NUM; iTouchIndex++)
+  {
+    aButtons[iTouchIndex].bIsTouched = false;
+    aButtons[iTouchIndex].iInitValue = touchRead(aButtonsPin[iTouchIndex]);
+    aButtons[iTouchIndex].iLastValue = 0;
+    aButtons[iTouchIndex].iTouchedCnt = 0;
+    aButtons[iTouchIndex].iNotTouchedCnt = 0;
+    aButtons[iTouchIndex].iTouchingCnt = 0;
+  }
+  
 }
 
 void loop() {
