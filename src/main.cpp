@@ -52,6 +52,72 @@ void setup() {
   
 }
 
+void sendAltSequence(Sequence pTouche)
+{
+  uint8_t i;
+  KeyReport touch;
+  for (i=0; i<6; i++)
+   touch.keys[i] = 0;
+  for (i=0; i<6; i++) {
+		if (pTouche[i] == 0x00) {
+				break;
+		} else {
+      touch.keys[0] = pTouche[i]; 
+      touch.modifiers = 0x04;    
+      bleKeyboard.sendReport(&touch);
+    }
+	}
+  bleKeyboard.releaseAll();
+}
+
 void loop() {
-  // put your main code here, to run repeatedly:
+
+  int iTouchIndex;
+  bool bTouch1 = false;
+
+  if(bleKeyboard.isConnected()) {
+  }
+
+  for (iTouchIndex=0; iTouchIndex<TOUCHS_NUM; iTouchIndex++)
+  {
+    aButtons[iTouchIndex].iLastValue = touchRead(aButtonsPin[iTouchIndex]);
+    if (aButtons[iTouchIndex].iLastValue<(aButtons[iTouchIndex].iInitValue-20))
+    {
+      aButtons[iTouchIndex].iTouchedCnt++;
+      if (aButtons[iTouchIndex].iTouchedCnt>5)
+      {
+      Serial.print("Touch ");
+      Serial.print( iTouchIndex );
+      Serial.println(" !");
+      aButtons[iTouchIndex].iTouchedCnt = 0;
+
+      if (!aButtons[iTouchIndex].bIsTouched)
+      {
+        aButtons[iTouchIndex].bIsTouched = true;
+
+        if (iTouchIndex==0)
+          bTouch1 = true;
+        else
+          if (bTouch1)
+            sendAltSequence(aSequence[iTouchIndex-1]);
+          else  
+            sendAltSequence(aSequence[iTouchIndex-1+TOUCHS_NUM-2]);
+      }
+      }
+    } else {
+      if (aButtons[iTouchIndex].iTouchedCnt>0)
+      {
+        aButtons[iTouchIndex].iNotTouchedCnt++;
+        if (aButtons[iTouchIndex].iNotTouchedCnt>2)
+        {
+          aButtons[iTouchIndex].iTouchedCnt = 0;
+          aButtons[iTouchIndex].iNotTouchedCnt = 0;
+        }
+      } else {
+        aButtons[iTouchIndex].bIsTouched = false;
+      }      
+    }
+
+  }
+
 }

@@ -8,7 +8,8 @@ The electronic part consists in an ESP32 and some capacitive touch buttons.
 
 ## Credits
 
-
-
+ESP32 BLE Keyboard library by T-vK
 
 ## License
+
+Copyright (c) 2021 CmPi
