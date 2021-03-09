@@ -24,8 +24,8 @@
 
 #define TOUCHS_NUM 10
 
-// the first button, aButtonsPin[0] is a modifier
-// the others correspond to the following characters (x2 because of the modifier)
+// the first button, aButtonsPin[0] is the "modifier"
+// the others buttons correspond to the following characters (x2 because of the modifier)
 
 uint8_t aButtonsPin[TOUCHS_NUM] { 2, 4, 0, 15, 13, 12, 14, 27, 33, 32 };
 
