@@ -27,15 +27,35 @@
 
 #include "main.h"
 
+#include "deepsleep.h"
+
+
 BleKeyboard bleKeyboard("Spanish Delta Keyboard","CmPi",100);
 
 CapacitiveTouchButton aButtons[TOUCHS_NUM];
 
+bool bModifierArmed = false;
+
+uint32_t tsLastKey = 0;
+
+RTC_DATA_ATTR int bootCount = 0;
+#define Threshold 40 /* Greater the value, more the sensitivity */
+
 void setup() {
 
-  Serial.begin(115200);
+  #ifdef DEBUG_SERIAL_SUPPORT
+  Serial.begin(SERIAL_BAUDRATE);
     while (!Serial)
   ;
+  #endif
+
+  //Increment boot number and print it every reboot
+  ++bootCount;
+  Serial.println("Boot number: " + String(bootCount));
+
+  //Print the wakeup reason for ESP32
+  print_wakeup_reason();
+
 
   bleKeyboard.begin();
 
@@ -48,7 +68,22 @@ void setup() {
     aButtons[iTouchIndex].iTouchedCnt = 0;
     aButtons[iTouchIndex].iNotTouchedCnt = 0;
     aButtons[iTouchIndex].iTouchingCnt = 0;
+
+    #ifdef DEBUG_SERIAL_SUPPORT
+    Serial.print("Line ");
+    Serial.print(iTouchIndex);
+    Serial.print(" (GPIO");
+    Serial.print(aButtonsPin[iTouchIndex]);
+    Serial.print(") = ");
+    Serial.println(aButtons[iTouchIndex].iInitValue);
+    #endif
+
+
   }
+
+  #ifdef DEBUG_SERIAL_SUPPORT
+  Serial.println("end of setup");
+  #endif
   
 }
 
@@ -68,7 +103,13 @@ void sendAltSequence(Sequence pTouche)
     }
 	}
   bleKeyboard.releaseAll();
+  tsLastKey = millis();
 }
+
+void callback(){
+  //placeholder callback function
+}
+
 
 void loop() {
 
@@ -96,12 +137,15 @@ void loop() {
         aButtons[iTouchIndex].bIsTouched = true;
 
         if (iTouchIndex==0)
-          bTouch1 = true;
+          bModifierArmed = true;
         else
-          if (bTouch1)
+        {
+          if (!bModifierArmed)
             sendAltSequence(aSequence[iTouchIndex-1]);
           else  
             sendAltSequence(aSequence[iTouchIndex-1+TOUCHS_NUM-2]);
+          bModifierArmed = false;
+        }
       }
       }
     } else {
@@ -119,5 +163,16 @@ void loop() {
     }
 
   }
+
+  if (millis()>(tsLastKey+10000)) {
+    Serial.println("time to sleep");
+    Serial.println("Going to sleep now");
+    delay(1000);
+    Serial.flush(); 
+    touchAttachInterrupt(T3, callback, Threshold);
+    esp_sleep_enable_touchpad_wakeup();
+    esp_deep_sleep_start();
+    Serial.println("This will never be printed");
+    }
 
 }

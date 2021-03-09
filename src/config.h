@@ -21,13 +21,23 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// Serial debug log
 
-#define TOUCHS_NUM 10
+#ifndef DEBUG_SERIAL_SUPPORT
+#define DEBUG_SERIAL_SUPPORT    1               // Enable serial debug log
+#endif
+
+#ifndef SERIAL_BAUDRATE
+#define SERIAL_BAUDRATE         115200          // Default baudrate
+#endif
+
+
+#define TOUCHS_NUM 9
 
 // the first button, aButtonsPin[0] is the "modifier"
 // the others buttons correspond to the following characters (x2 because of the modifier)
 
-uint8_t aButtonsPin[TOUCHS_NUM] { 2, 4, 0, 15, 13, 12, 14, 27, 33, 32 };
+uint8_t aButtonsPin[TOUCHS_NUM] { 4, 2, 15, 13, 12, 14, 27, 33, 32 };
 
 #define KEY_NON 0x00 // No key
 
@@ -60,3 +70,4 @@ Sequence aSequence[16] = {
     { KEY_KP0, KEY_KP2, KEY_KP5, KEY_KP2, KEY_NON, KEY_NON }, // ALT 0252 - ü
     { KEY_KP0, KEY_KP2, KEY_KP2, KEY_KP0, KEY_NON, KEY_NON }  // ALT 0220 - Ü
 };
+
