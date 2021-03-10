@@ -7,8 +7,9 @@
  *
  */
 
-#include "Arduino.h"
 #include "CmpButtons.h"
+
+#include "Arduino.h"
 
 CmpButton::CmpButton(byte attachTo, byte buttonMode /*= INPUT_PULLUP*/, unsigned int debounceTimeout /*= DEBOUNCE_MS*/)
 {

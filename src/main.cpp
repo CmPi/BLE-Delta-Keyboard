@@ -3,32 +3,11 @@
  *
  * Created on Mon Mar 08 2021
  *
- * The MIT License (MIT)
  * Copyright (c) 2021 CmPi
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial
- * portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
- * TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <Arduino.h>
-
-#include "BleKeyboard.h"
-
 #include "main.h"
-
-#include "deepsleep.h"
-
 
 BleKeyboard bleKeyboard("Spanish Delta Keyboard","CmPi",100);
 
@@ -38,9 +17,6 @@ bool bModifierArmed = false;
 
 uint32_t tsLastKey = 0;
 
-RTC_DATA_ATTR int bootCount = 0;
-#define Threshold 40 /* Greater the value, more the sensitivity */
-
 void setup() {
 
   #ifdef DEBUG_SERIAL_SUPPORT
@@ -49,13 +25,9 @@ void setup() {
   ;
   #endif
 
-  //Increment boot number and print it every reboot
-  ++bootCount;
-  Serial.println("Boot number: " + String(bootCount));
+  ds_Setup();
 
-  //Print the wakeup reason for ESP32
-  print_wakeup_reason();
-
+ 
 
   bleKeyboard.begin();
 
@@ -77,7 +49,6 @@ void setup() {
     Serial.print(") = ");
     Serial.println(aButtons[iTouchIndex].iInitValue);
     #endif
-
 
   }
 
@@ -106,15 +77,11 @@ void sendAltSequence(Sequence pTouche)
   tsLastKey = millis();
 }
 
-void callback(){
-  //placeholder callback function
-}
 
 
 void loop() {
 
   int iTouchIndex;
-  bool bTouch1 = false;
 
   if(bleKeyboard.isConnected()) {
   }
@@ -165,14 +132,7 @@ void loop() {
   }
 
   if (millis()>(tsLastKey+10000)) {
-    Serial.println("time to sleep");
-    Serial.println("Going to sleep now");
-    delay(1000);
-    Serial.flush(); 
-    touchAttachInterrupt(T3, callback, Threshold);
-    esp_sleep_enable_touchpad_wakeup();
-    esp_deep_sleep_start();
-    Serial.println("This will never be printed");
-    }
+    ds_Sleep(T0);
+  }
 
 }

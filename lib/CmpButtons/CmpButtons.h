@@ -32,6 +32,6 @@ class CmpButton
     public:
         CmpButton(uint8_t attachTo, uint8_t buttonType = INPUT_PULLUP, unsigned int debounceTimeout = DEBOUNCE_MS);
         void setDebounceTime(unsigned int ms);
-}
+};
 
 #endif
