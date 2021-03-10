@@ -8,9 +8,11 @@
 
 #pragma once
 
+#include "config.h"
+
+
 #include <Arduino.h>
 
-#include "config.h"
 
 #include "BleKeyboard.h"
 #include "deepsleep.h"

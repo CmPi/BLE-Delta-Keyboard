@@ -17,6 +17,8 @@ bool bModifierArmed = false;
 
 uint32_t tsLastKey = 0;
 
+static const char *TAG = "main";
+
 void setup() {
 
   #ifdef DEBUG_SERIAL_SUPPORT
@@ -26,8 +28,6 @@ void setup() {
   #endif
 
   ds_Setup();
-
- 
 
   bleKeyboard.begin();
 
@@ -42,6 +42,7 @@ void setup() {
     aButtons[iTouchIndex].iTouchingCnt = 0;
 
     #ifdef DEBUG_SERIAL_SUPPORT
+    ESP_LOGI( TAG, "Capacitive touch %d (GPIO %d) = %d", iTouchIndex, aButtonsPin[iTouchIndex], aButtons[iTouchIndex].iInitValue);
     Serial.print("Line ");
     Serial.print(iTouchIndex);
     Serial.print(" (GPIO");

@@ -17,4 +17,7 @@
 #define SERIAL_BAUDRATE         115200          // Default baudrate
 #endif
 
-#define CONFIG_LOG_DEFAULT_LEVEL ESP_LOGV
+#ifdef CONFIG_LOG_DEFAULT_LEVEL
+#undef CONFIG_LOG_DEFAULT_LEVEL
+#endif
+#define CONFIG_LOG_DEFAULT_LEVEL ESP_LOG_VERBOSE

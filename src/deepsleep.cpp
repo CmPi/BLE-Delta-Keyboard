@@ -26,37 +26,37 @@ void ds_PrintWakeupTouchpad()
   switch (touchPin)
   {
   case 0:
-    Serial.println("Touch detected on GPIO 4");
+    ESP_LOGI( TAG, "Touch detected on GPIO 4" );
     break;
   case 1:
-    Serial.println("Touch detected on GPIO 0");
+    ESP_LOGI( TAG, "Touch detected on GPIO 0");
     break;
   case 2:
-    Serial.println("Touch detected on GPIO 2");
+    ESP_LOGI( TAG, "Touch detected on GPIO 2");
     break;
   case 3:
-    Serial.println("Touch detected on GPIO 15");
+    ESP_LOGI( TAG, "Touch detected on GPIO 15");
     break;
   case 4:
-    Serial.println("Touch detected on GPIO 13");
+    ESP_LOGI( TAG, "Touch detected on GPIO 13");
     break;
   case 5:
-    Serial.println("Touch detected on GPIO 12");
+    ESP_LOGI( TAG, "Touch detected on GPIO 12");
     break;
   case 6:
-    Serial.println("Touch detected on GPIO 14");
+    ESP_LOGI( TAG, "Touch detected on GPIO 14");
     break;
   case 7:
-    Serial.println("Touch detected on GPIO 27");
+    ESP_LOGI( TAG, "Touch detected on GPIO 27");
     break;
   case 8:
-    Serial.println("Touch detected on GPIO 33");
+    ESP_LOGI( TAG, "Touch detected on GPIO 33");
     break;
   case 9:
-    Serial.println("Touch detected on GPIO 32");
+    ESP_LOGI( TAG, "Touch detected on GPIO 32");
     break;
   default:
-    Serial.println("Wakeup not by touchpad");
+    ESP_LOGI( TAG, "Wakeup not by touchpad");
     break;
   }
 }
@@ -95,7 +95,8 @@ void ds_Setup()
 {
   //Increment boot number and print it every reboot
   ++ds_iBootCount;
-  Serial.println("Boot number: " + String(ds_iBootCount));
+ // Serial.println("Boot number: " + String(ds_iBootCount));
+  ESP_LOGI( TAG, "Boot number: %d", ds_iBootCount );
 
   //Print the wakeup reason for ESP32
   ds_PrintWakeupReason();
@@ -111,7 +112,7 @@ void ds_DefaultCallback()
 
 void ds_Sleep(uint8_t Pin)
 {
-  ESP_LOGW(TAG, "Going to sleep now");
+  ESP_LOGI(TAG, "Going to sleep now");
   delay(500);
   touchAttachInterrupt(T3, ds_DefaultCallback, DS_TRESHOLD);
   esp_sleep_enable_touchpad_wakeup();
