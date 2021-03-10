@@ -6,13 +6,11 @@
  * Copyright (c) 2021 CmPi
  */
 
-#pragma once
-
 #include "config.h"
 
+#pragma once
 
-#include <Arduino.h>
-
+//#include <Arduino.h>
 
 #include "BleKeyboard.h"
 #include "deepsleep.h"

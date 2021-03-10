@@ -40,23 +40,10 @@ void setup() {
     aButtons[iTouchIndex].iTouchedCnt = 0;
     aButtons[iTouchIndex].iNotTouchedCnt = 0;
     aButtons[iTouchIndex].iTouchingCnt = 0;
-
-    #ifdef DEBUG_SERIAL_SUPPORT
     ESP_LOGI( TAG, "Capacitive touch %d (GPIO %d) = %d", iTouchIndex, aButtonsPin[iTouchIndex], aButtons[iTouchIndex].iInitValue);
-    Serial.print("Line ");
-    Serial.print(iTouchIndex);
-    Serial.print(" (GPIO");
-    Serial.print(aButtonsPin[iTouchIndex]);
-    Serial.print(") = ");
-    Serial.println(aButtons[iTouchIndex].iInitValue);
-    #endif
-
   }
 
-  #ifdef DEBUG_SERIAL_SUPPORT
-  Serial.println("end of setup");
-  #endif
-  
+  ESP_LOGI( TAG,"end of setup");
 }
 
 void sendAltSequence(Sequence pTouche)

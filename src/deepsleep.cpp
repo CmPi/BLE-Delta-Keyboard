@@ -79,14 +79,14 @@ void ds_PrintWakeupReason()
     Serial.println("Wakeup caused by timer");
     break;
   case ESP_SLEEP_WAKEUP_TOUCHPAD:
-    Serial.println("Wakeup caused by touchpad");
+    ESP_LOGI( TAG, "Wakeup caused by touchpad" );
     ds_PrintWakeupTouchpad();
     break;
   case ESP_SLEEP_WAKEUP_ULP:
     Serial.println("Wakeup caused by ULP program");
     break;
   default:
-    Serial.printf("Wakeup was not caused by deep sleep: %d\n", wakeup_reason);
+    ESP_LOGI( TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason );
     break;
   }
 }
