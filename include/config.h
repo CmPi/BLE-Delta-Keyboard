@@ -21,3 +21,5 @@
 #undef LOG_LOCAL_LEVEL 
 #endif
 #define LOG_LOCAL_LEVEL  ESP_LOG_VERBOSE
+
+static const char *LOG_TAG = "delta_kb";

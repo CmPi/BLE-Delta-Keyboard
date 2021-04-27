@@ -7,11 +7,13 @@
 
 #include "deepsleep.h"
 
-static const char *TAG = "deepsleep";
+uint32_t ds_tsReboot = 0;
+uint32_t ds_tsWakeup = 0;
 
-touch_pad_t touchPin;
+// touchPin;
 
 RTC_DATA_ATTR int ds_iBootCount = 0;
+RTC_DATA_ATTR uint32_t ds_sAwakeTime = 0;
 
 /*
 Method to print the touchpad by which ESP32
@@ -21,42 +23,42 @@ has been awaken from sleep
 
 void ds_PrintWakeupTouchpad()
 {
-  touchPin = esp_sleep_get_touchpad_wakeup_status();
+  touch_pad_t touchPin = esp_sleep_get_touchpad_wakeup_status();
 
   switch (touchPin)
   {
   case 0:
-    ESP_LOGI( TAG, "Touch detected on GPIO 4" );
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 4" );
     break;
   case 1:
-    ESP_LOGI( TAG, "Touch detected on GPIO 0");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 0");
     break;
   case 2:
-    ESP_LOGI( TAG, "Touch detected on GPIO 2");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 2");
     break;
   case 3:
-    ESP_LOGI( TAG, "Touch detected on GPIO 15");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 15");
     break;
   case 4:
-    ESP_LOGI( TAG, "Touch detected on GPIO 13");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 13");
     break;
   case 5:
-    ESP_LOGI( TAG, "Touch detected on GPIO 12");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 12");
     break;
   case 6:
-    ESP_LOGI( TAG, "Touch detected on GPIO 14");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 14");
     break;
   case 7:
-    ESP_LOGI( TAG, "Touch detected on GPIO 27");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 27");
     break;
   case 8:
-    ESP_LOGI( TAG, "Touch detected on GPIO 33");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 33");
     break;
   case 9:
-    ESP_LOGI( TAG, "Touch detected on GPIO 32");
+    ESP_LOGI( LOG_TAG, "Touch detected on GPIO 32");
     break;
   default:
-    ESP_LOGI( TAG, "Wakeup not by touchpad");
+    ESP_LOGI( LOG_TAG, "Wakeup not by touchpad");
     break;
   }
 }
@@ -86,23 +88,34 @@ void ds_PrintWakeupReason()
     Serial.println("Wakeup caused by ULP program");
     break;
   default:
-    ESP_LOGI( TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason );
+    ESP_LOGI( LOG_TAG, "Wakeup was not caused by deep sleep: %d\n", wakeup_reason );
     break;
   }
 }
 
 void ds_Setup()
 {
+  ds_tsWakeup = millis();
+
   //Increment boot number and print it every reboot
   ++ds_iBootCount;
+  if (ds_iBootCount<2) 
+  {
+    ds_sAwakeTime = 0;
+    ds_tsReboot = ds_tsWakeup;
+  }
+
  // Serial.println("Boot number: " + String(ds_iBootCount));
-  ESP_LOGI( TAG, "Boot number: %d", ds_iBootCount );
+  ESP_LOGI( LOG_TAG, "Boot number: %d", ds_iBootCount );
+  ESP_LOGI( LOG_TAG, "ds_tsReboot = %d", ds_tsReboot );
+  ESP_LOGI( LOG_TAG, "ds_tsWakeup = %d", ds_tsWakeup );
+  ESP_LOGI( LOG_TAG, "ds_sAwakeTime = %d", ds_sAwakeTime );
 
   //Print the wakeup reason for ESP32
   ds_PrintWakeupReason();
 }
 
-/**
+/**  
 * @brief Default coallback function
 */
 
@@ -114,7 +127,8 @@ void ds_Sleep(uint8_t Pin)
 {
   ESP_LOGI(TAG, "Going to sleep now");
   delay(500);
-  touchAttachInterrupt(T3, ds_DefaultCallback, DS_TRESHOLD);
+  touchAttachInterrupt(Pin, ds_DefaultCallback, DS_TRESHOLD);
   esp_sleep_enable_touchpad_wakeup();
+  ds_sAwakeTime =+ (ds_tsWakeup-millis())/1000;
   esp_deep_sleep_start();
 }
